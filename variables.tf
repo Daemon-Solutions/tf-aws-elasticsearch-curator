@@ -13,8 +13,28 @@ variable "es_port" {
   default     = "9200"
 }
 
-variable "index_filters" {
-  description = "List of Curator index filter maps"
+variable "snapshot_bucket" {
+  description = "The S3 bucket to save snapshots"
+  type        = "string"
+}
+
+variable "snapshot_bucket_region" {
+  description = "The S3 bucket region"
+  type        = "string"
+}
+
+variable "snapshot_name" {
+  description = "The Elasticsearch indices snapshot name. It supports Python strftime as per http://strftime.org/"
+  type        = "string"
+}
+
+variable "delete_index_filters" {
+  description = "List of Curator index filter maps used for finding indices to delete"
+  type        = "list"
+}
+
+variable "snapshot_index_filters" {
+  description = "List of Curator index filter maps  used for finding indices to snapshot"
   type        = "list"
 }
 
