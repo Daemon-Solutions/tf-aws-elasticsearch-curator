@@ -14,10 +14,11 @@ module "lambda" {
 
   environment {
     variables = {
-      ES_HOST       = "${var.es_host}"
-      ES_PORT       = "${var.es_port}"
-      INDEX_FILTERS = "${jsonencode(var.index_filters)}"
-      TEST_MODE     = "${var.test_mode ? "true" : "false"}"
+      ES_HOST                = "${var.es_host}"
+      ES_PORT                = "${var.es_port}"
+      DELETE_INDEX_FILTERS   = "${jsonencode(var.delete_index_filters)}"
+      SNAPSHOT_INDEX_FILTERS = "${jsonencode(var.snapshot_index_filters)}"
+      TEST_MODE              = "${var.test_mode ? "true" : "false"}"
     }
   }
 
