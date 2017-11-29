@@ -83,6 +83,7 @@ def lambda_handler(event, context):
                     print('Registering snapshot repository in s3://{}'.format(SNAPSHOT_BUCKET))
                     response = curator.create_repository(
                         client=es,
+                        repository=SNAPSHOT_BUCKET,
                         repo_type='s3',
                         bucket=SNAPSHOT_BUCKET,
                         region=SNAPSHOT_BUCKET_REGION
