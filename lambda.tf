@@ -16,6 +16,9 @@ module "lambda" {
     variables = {
       ES_HOST                = "${var.es_host}"
       ES_PORT                = "${var.es_port}"
+      SNAPSHOT_BUCKET        = "${var.snapshot_bucket}"
+      SNAPSHOT_BUCKET_REGION = "${var.snapshot_bucket_region}"
+      SNAPSHOT_NAME          = "${var.snapshot_name}"
       DELETE_INDEX_FILTERS   = "${jsonencode(var.delete_index_filters)}"
       SNAPSHOT_INDEX_FILTERS = "${jsonencode(var.snapshot_index_filters)}"
       TEST_MODE              = "${var.test_mode ? "true" : "false"}"
