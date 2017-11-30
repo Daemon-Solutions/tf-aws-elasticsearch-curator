@@ -94,7 +94,7 @@ def lambda_handler(event, context):
                 snapshot_indices = curator.Snapshot(
                     indices,
                     repository=SNAPSHOT_BUCKET,
-                    snapshot=snapshot_name
+                    name=snapshot_name
                 )
                 snapshot_indices.do_action()
                 result['snapshot'] = indices.working_list()
