@@ -1,19 +1,23 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
-from __future__ import print_function
-
+import certifi
 import curator
 import copy
 import json
 import os
 import re
 
+from aws_requests_auth import boto_utils
+from aws_requests_auth.aws_auth import AWSRequestsAuth
 from datetime import datetime
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, RequestsHttpConnection
 
 
 ES_HOST = os.environ['ES_HOST']
 ES_PORT = int(os.environ['ES_PORT'])
+ES_REGION = os.environ['ES_REGION']
+ES_SIGNING = bool(int(os.environ['ES_SIGNING']))
+ES_SSL = bool(int(os.environ['ES_SSL']))
 SNAPSHOT_BUCKET = os.environ['SNAPSHOT_BUCKET']
 SNAPSHOT_BUCKET_REGION = os.environ['SNAPSHOT_BUCKET_REGION']
 SNAPSHOT_NAME = os.environ['SNAPSHOT_NAME']
@@ -24,7 +28,7 @@ def parse_index_filters(index_filters):
     result = []
     for index_filter in json.loads(index_filters):
         for key, value in index_filter.items():
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 # Convert integer-strings to integers.
                 if re.match(r'^-?\d+$', value):
                     index_filter[key] = int(value)
@@ -33,6 +37,33 @@ def parse_index_filters(index_filters):
 
 DELETE_INDEX_FILTERS = parse_index_filters(os.environ['DELETE_INDEX_FILTERS'])
 SNAPSHOT_INDEX_FILTERS = parse_index_filters(os.environ['SNAPSHOT_INDEX_FILTERS'])
+
+
+def elasticsearch_client():
+
+    kwargs = {
+        'host': ES_HOST,
+        'port': ES_PORT,
+    }
+
+    if ES_SSL:
+        kwargs.update({
+            'use_ssl': True,
+            'ca_certs': certifi.where(),
+        })
+
+    if ES_SIGNING:
+        kwargs.update({
+            'connection_class': RequestsHttpConnection,
+            'http_auth': AWSRequestsAuth(
+                aws_host=ES_HOST,
+                aws_region=ES_REGION,
+                aws_service='es',
+                **boto_utils.get_credentials()
+            ),
+        })
+
+    return Elasticsearch(**kwargs)
 
 
 def filter_indices(es, filters):
@@ -61,12 +92,8 @@ def lambda_handler(event, context):
         if not SNAPSHOT_BUCKET or not SNAPSHOT_BUCKET_REGION or not SNAPSHOT_NAME:
             raise ValueError('Some required snapshot parameters have no values - aborting')
 
-    # Create an Elasticsearch client.
-    print('Connecting to Elasticsearch at {}:{}'.format(
-         ES_HOST, ES_PORT,
-    ))
+    es = elasticsearch_client()
 
-    es = Elasticsearch(host=ES_HOST, port=ES_PORT)
     result = {}
 
     if SNAPSHOT_INDEX_FILTERS:
@@ -74,11 +101,11 @@ def lambda_handler(event, context):
         indices = filter_indices(es, SNAPSHOT_INDEX_FILTERS)
 
         if TEST_MODE:
-            result['snapshots'] = []
+            result['snapshots'] = indices.working_list()
             result['test_mode'] = True
-
         else:
             if indices.working_list():
+
                 if not curator.repository_exists(es, repository=SNAPSHOT_BUCKET):
                     print('Registering snapshot repository in s3://{}'.format(SNAPSHOT_BUCKET))
                     response = curator.create_repository(
@@ -103,7 +130,7 @@ def lambda_handler(event, context):
         indices = filter_indices(es, DELETE_INDEX_FILTERS)
 
         if TEST_MODE:
-            result['deleted'] = []
+            result['deleted'] = indices.working_list()
             result['test_mode'] = True
         else:
             if indices.working_list():
@@ -113,3 +140,8 @@ def lambda_handler(event, context):
                 result['deleted'] = indices.working_list()
 
     return result
+
+
+if __name__ == '__main__':
+    assert TEST_MODE
+    print(lambda_handler({}, {}))
