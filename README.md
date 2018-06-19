@@ -2,12 +2,12 @@
 
 This module creates a scheduled Lambda function that runs Elasticsearch Curator.
 
-It currently only works with Elasticsearch 5.x on EC2, but it would not take much work to support AWS Elasticsearch Service.
+It currently only works with Elasticsearch 6.x.
 
 ## Features
 
-* Deletes indices matching the filters provided to the module
-* Creates a snapshot of the indices matching the filters provided to the module
+* Creates snapshots of indices matching filters provided to the module
+* Deletes indices matching filters provided to the module
 
 ## Usage
 
@@ -34,11 +34,14 @@ module "elasticsearch_curator" {
   snapshot_name          = "kibana-%Y.%m.%d"
 
   // Specify the filters for Curator to use when finding indices to snapshot.
+  // The documentation is not great for this but try looking at:
+  // https://curator.readthedocs.io/en/v5.5.1/filters.html#indexlist
+  // https://github.com/elastic/curator/blob/v5.5.4/curator/indexlist.py#L1136
   snapshot_index_filters = [
     {
       filtertype = "pattern"
       kind       = "prefix"
-      value      = "logs"
+      value      = "logstash-"
     },
     {
       filtertype = "age"
@@ -52,13 +55,13 @@ module "elasticsearch_curator" {
 
   // Specify the filters for Curator to use when finding indices to delete.
   // The documentation is not great for this but try looking at:
-  // https://curator.readthedocs.io/en/5.3/filters.html#indexlist
-  // https://github.com/elastic/curator/blob/v5.3.0/curator/indexlist.py#L1032
+  // https://curator.readthedocs.io/en/v5.5.1/filters.html#indexlist
+  // https://github.com/elastic/curator/blob/v5.5.4/curator/indexlist.py#L1136
   delete_index_filters = [
     {
       filtertype = "pattern"
       kind       = "prefix"
-      value      = "logs"
+      value      = "logstash-"
     },
     {
       filtertype = "age"
@@ -66,7 +69,7 @@ module "elasticsearch_curator" {
       direction  = "older"
       timestring = "%Y.%m.%d"
       unit       = "days"
-      unit_count = 3
+      unit_count = 14
     },
   ]
 }

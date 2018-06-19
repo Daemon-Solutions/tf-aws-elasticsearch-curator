@@ -1,10 +1,10 @@
 module "lambda" {
-  source = "../tf-aws-lambda"
+  source = "github.com/claranet/terraform-aws-lambda?ref=v0.9.0"
 
   function_name = "${var.name}"
   description   = "Elasticsearch Curator"
   handler       = "main.lambda_handler"
-  runtime       = "python2.7"
+  runtime       = "python3.6"
   timeout       = "${var.timeout}"
 
   source_path = "${path.module}/lambda"
@@ -16,6 +16,9 @@ module "lambda" {
     variables = {
       ES_HOST                = "${var.es_host}"
       ES_PORT                = "${var.es_port}"
+      ES_REGION              = "${coalesce(var.es_region, data.aws_region.current.name)}"
+      ES_SIGNING             = "${var.es_request_signing ? 1 : 0}"
+      ES_SSL                 = "${var.es_ssl ? 1 : 0}"
       SNAPSHOT_BUCKET        = "${var.snapshot_bucket}"
       SNAPSHOT_BUCKET_REGION = "${var.snapshot_bucket_region}"
       SNAPSHOT_NAME          = "${var.snapshot_name}"

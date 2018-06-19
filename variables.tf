@@ -13,6 +13,21 @@ variable "es_port" {
   default     = "9200"
 }
 
+variable "es_request_signing" {
+  description = "Enable this to sign Amazon ES requests"
+  default     = false
+}
+
+variable "es_region" {
+  description = "AWS region to use when signing Amazon ES requests (defaults to current region)"
+  default     = ""
+}
+
+variable "es_ssl" {
+  description = "Connect to Elasticsearch using SSL"
+  default     = false
+}
+
 variable "snapshot_bucket" {
   description = "The S3 bucket to save snapshots"
   type        = "string"
@@ -64,6 +79,6 @@ variable "timeout" {
 }
 
 variable "test_mode" {
-  description = "Set this to true to find indices but not delete them"
+  description = "Set this to true to find indices but not snapshot/delete them"
   default     = false
 }
