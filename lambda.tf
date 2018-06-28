@@ -1,5 +1,5 @@
 module "lambda" {
-  source = "github.com/claranet/terraform-aws-lambda?ref=v0.9.0"
+  source = "github.com/claranet/terraform-aws-lambda?ref=v0.9.1"
 
   function_name = "${var.name}"
   description   = "Elasticsearch Curator"
