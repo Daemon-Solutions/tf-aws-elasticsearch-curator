@@ -10,7 +10,7 @@ module "lambda" {
   source_path = "${path.module}/lambda"
 
   attach_policy = "${var.attach_vpc_config}"
-  policy        = "${data.aws_iam_policy_document.allow_network_actions.json}"
+  policy        = "${data.aws_iam_policy_document.allow_es_actions.json}"
 
   environment {
     variables = {
@@ -36,18 +36,20 @@ module "lambda" {
   }
 }
 
-data "aws_iam_policy_document" "allow_network_actions" {
+data "aws_iam_policy_document" "allow_es_actions" {
   statement {
     effect = "Allow"
 
     actions = [
-      "ec2:CreateNetworkInterface",
-      "ec2:DescribeNetworkInterfaces",
-      "ec2:DeleteNetworkInterface",
+      "es:ESHttpDelete",
+      "es:ESHttpGet",
+      "es:ESHttpHead",
+      "es:ESHttpPost",
+      "es:ESHttpPut"
     ]
 
     resources = [
-      "*",
+      "arn:aws:es:${var.es_region}:${var.account}:domain/${var.es_name}",
     ]
   }
 }

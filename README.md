@@ -17,6 +17,8 @@ module "elasticsearch_curator" {
 
   name = "${var.envname}-es-curator"
 
+  account = "${var.account}"
+  es_name = "${var.es_name}"
   es_host = "${var.es_host}"
   es_port = "${var.es_port}"
 
