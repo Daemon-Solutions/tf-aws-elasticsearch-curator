@@ -9,7 +9,7 @@ module "lambda" {
 
   source_path = "${path.module}/lambda"
 
-  attach_policy = "${var.attach_vpc_config}"
+  attach_policy = "${var.es_request_signing}"
   policy        = "${data.aws_iam_policy_document.allow_es_actions.json}"
 
   environment {
@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "allow_es_actions" {
     ]
 
     resources = [
-      "arn:aws:es:${var.es_region}:${var.account}:domain/${var.es_name}",
+      "${var.es_arn}/*",
     ]
   }
 }

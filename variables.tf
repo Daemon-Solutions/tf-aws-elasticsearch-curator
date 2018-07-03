@@ -3,14 +3,9 @@ variable "name" {
   default     = "elasticsearch-curator"
 }
 
-variable "account" {
-  description = "AWS account where Elasticsearch is located"
-  type        = "string"
-}
-
-variable "es_name" {
-  description = "The Elasticsearch domain name"
-  type        = "string"
+variable "es_arn" {
+  description = "The Elasticsearch ARN of the domain (only required when signing requests)"
+  default     = ""
 }
 
 variable "es_host" {
