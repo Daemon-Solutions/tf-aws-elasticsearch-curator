@@ -17,8 +17,8 @@ module "elasticsearch_curator" {
 
   name = "${var.envname}-es-curator"
 
-  account = "${var.account}"
-  es_name = "${var.es_name}"
+  // Elasticsearch ARN is only required when signing requests using AWS Signature V4
+  es_arn  = "${var.es_arn}"
   es_host = "${var.es_host}"
   es_port = "${var.es_port}"
 
