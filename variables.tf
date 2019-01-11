@@ -36,16 +36,19 @@ variable "es_ssl" {
 variable "snapshot_bucket" {
   description = "The S3 bucket to save snapshots"
   type        = "string"
+  default     = ""
 }
 
 variable "snapshot_bucket_region" {
   description = "The S3 bucket region"
   type        = "string"
+  default     = ""
 }
 
 variable "snapshot_name" {
   description = "The Elasticsearch indices snapshot name. It supports Python strftime as per http://strftime.org/"
   type        = "string"
+  default     = ""
 }
 
 variable "delete_index_filters" {
@@ -56,6 +59,7 @@ variable "delete_index_filters" {
 variable "snapshot_index_filters" {
   description = "List of Curator index filter maps  used for finding indices to snapshot"
   type        = "list"
+  default     = []
 }
 
 variable "schedule_expression" {

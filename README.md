@@ -39,6 +39,7 @@ module "elasticsearch_curator" {
   // The documentation is not great for this but try looking at:
   // https://curator.readthedocs.io/en/v5.5.1/filters.html#indexlist
   // https://github.com/elastic/curator/blob/v5.5.4/curator/indexlist.py#L1136
+  // If snapshot_index_filter is not specified, snapshots will be disabled
   snapshot_index_filters = [
     {
       filtertype = "pattern"
