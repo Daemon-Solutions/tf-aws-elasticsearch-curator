@@ -1,5 +1,5 @@
 module "lambda" {
-  source = "github.com/claranet/terraform-aws-lambda?ref=v0.9.1"
+  source = "github.com/claranet/terraform-aws-lambda?ref=v0.10.0"
 
   function_name = "${var.name}"
   description   = "Elasticsearch Curator"
@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "allow_es_actions" {
       "es:ESHttpGet",
       "es:ESHttpHead",
       "es:ESHttpPost",
-      "es:ESHttpPut"
+      "es:ESHttpPut",
     ]
 
     resources = [
