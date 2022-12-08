@@ -1,4 +1,4 @@
 aws-requests-auth==0.4.1
-certifi==2018.4.16
+certifi==2022.12.7
 elasticsearch==6.2.0
 elasticsearch-curator==5.5.4
